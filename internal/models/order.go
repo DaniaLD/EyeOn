@@ -26,3 +26,11 @@ type OrderResponse struct {
 	Symbol  string
 	Status  string
 }
+
+type CancelOrderRequest struct {
+	OrderID string `uri:"id" binding:"required"`
+}
+
+type CancelOrderResponse struct {
+	Cancelled bool
+}

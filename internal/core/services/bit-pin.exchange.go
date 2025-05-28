@@ -17,3 +17,7 @@ func NewBitpinExchangeService(exchange ports.ExchangePort) *ExchangeService {
 func (s *ExchangeService) CreateOrder(ctx context.Context, req models.CreateOrderRequest) (*models.OrderResponse, error) {
 	return s.exchange.CreateOrder(ctx, req)
 }
+
+func (s *ExchangeService) CancelOrder(ctx context.Context, req models.CancelOrderRequest) (*models.CancelOrderResponse, error) {
+	return s.exchange.CancelOrder(ctx, req)
+}

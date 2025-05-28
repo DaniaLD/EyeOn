@@ -119,3 +119,28 @@ func (b *BitpinExchange) CreateOrder(ctx context.Context, req models.CreateOrder
 		Status:  result.Status,
 	}, nil
 }
+
+func (b *BitpinExchange) CancelOrder(ctx context.Context, req models.CancelOrderRequest) (*models.CancelOrderResponse, error) {
+	if err := b.ensureToken(ctx); err != nil {
+		return nil, err
+	}
+
+	httpReq, err := http.NewRequestWithContext(ctx, "DELETE", fmt.Sprintf("%s/api/v1/odr/orders/%s/", b.baseURL, req.OrderID), nil)
+	if err != nil {
+		return nil, err
+	}
+	b.authRequest(httpReq)
+
+	resp, err := b.client.Do(httpReq)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode >= 400 {
+		resBody, _ := ioutil.ReadAll(resp.Body)
+		return nil, fmt.Errorf("bitpin error: %s", resBody)
+	}
+
+	return &models.CancelOrderResponse{Cancelled: true}, nil
+}
