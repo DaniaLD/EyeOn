@@ -9,6 +9,7 @@ import (
 	"github.com/DaniaLD/EyeOn/internal/models"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 )
 
 type BitpinExchange struct {
@@ -143,4 +144,47 @@ func (b *BitpinExchange) CancelOrder(ctx context.Context, req models.CancelOrder
 	}
 
 	return &models.CancelOrderResponse{Cancelled: true}, nil
+}
+
+func (b *BitpinExchange) GetBalance(ctx context.Context) (*models.BalanceResponse, error) {
+	if err := b.ensureToken(ctx); err != nil {
+		return nil, err
+	}
+
+	httpReq, err := http.NewRequestWithContext(ctx, "GET", b.baseURL+"/api/v1/wlt/wallets/", nil)
+	if err != nil {
+		return nil, err
+	}
+	b.authRequest(httpReq)
+
+	resp, err := b.client.Do(httpReq)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode >= 400 {
+		bodyBytes, _ := ioutil.ReadAll(resp.Body)
+		return nil, fmt.Errorf("bitpin error: %s", bodyBytes)
+	}
+
+	var result []struct {
+		Asset   string `json:"asset"`
+		Balance string `json:"balance"`
+	}
+
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, err
+	}
+
+	assets := make(map[string]float64)
+	for _, wallet := range result {
+		balanceFloat, err := strconv.ParseFloat(wallet.Balance, 64)
+		if err != nil {
+			continue
+		}
+		assets[wallet.Asset] = balanceFloat
+	}
+
+	return &models.BalanceResponse{Assets: assets}, nil
 }

@@ -34,3 +34,7 @@ type CancelOrderRequest struct {
 type CancelOrderResponse struct {
 	Cancelled bool
 }
+
+type BalanceResponse struct {
+	Assets map[string]float64
+}

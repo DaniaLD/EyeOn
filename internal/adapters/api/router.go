@@ -25,4 +25,5 @@ func (r Router) Init() {
 	// Bitpin routes
 	v1.POST("/bitpin/order", r.bitpinHandler.CreateOrder)
 	v1.DELETE("/bitpin/order/:id", r.bitpinHandler.CancelOrder)
+	v1.GET("bitpin/wallet", r.bitpinHandler.GetBalance)
 }

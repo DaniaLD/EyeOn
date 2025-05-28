@@ -21,3 +21,7 @@ func (s *ExchangeService) CreateOrder(ctx context.Context, req models.CreateOrde
 func (s *ExchangeService) CancelOrder(ctx context.Context, req models.CancelOrderRequest) (*models.CancelOrderResponse, error) {
 	return s.exchange.CancelOrder(ctx, req)
 }
+
+func (s *ExchangeService) GetBalance(ctx context.Context) (*models.BalanceResponse, error) {
+	return s.exchange.GetBalance(ctx)
+}
