@@ -10,15 +10,15 @@ import (
 	"time"
 )
 
-type BitpinHandler struct {
-	svc *service.BitPinExchangeService
+type NobitexHandler struct {
+	svc *service.NobitexExchangeService
 }
 
-func NewBitpinHandler(svc *service.BitPinExchangeService) *BitpinHandler {
-	return &BitpinHandler{svc: svc}
+func NewNobitexHandler(svc *service.NobitexExchangeService) *NobitexHandler {
+	return &NobitexHandler{svc: svc}
 }
 
-func (h *BitpinHandler) CreateOrder(c *gin.Context) {
+func (h *NobitexHandler) CreateOrder(c *gin.Context) {
 	var req models.CreateOrderRequest
 	if !dtovalidator.BindBodyAndValidate(c, &req) {
 		return
@@ -34,7 +34,7 @@ func (h *BitpinHandler) CreateOrder(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
-func (h *BitpinHandler) CancelOrder(c *gin.Context) {
+func (h *NobitexHandler) CancelOrder(c *gin.Context) {
 	var req models.CancelOrderRequest
 	if !dtovalidator.BindUriAndValidate(c, &req) {
 		return
@@ -50,7 +50,7 @@ func (h *BitpinHandler) CancelOrder(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
-func (h *BitpinHandler) GetBalance(c *gin.Context) {
+func (h *NobitexHandler) GetBalance(c *gin.Context) {
 	resp, err := h.svc.GetBalance(context.Background())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -59,7 +59,7 @@ func (h *BitpinHandler) GetBalance(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
-func (h *BitpinHandler) GetOrderBook(c *gin.Context) {
+func (h *NobitexHandler) GetOrderBook(c *gin.Context) {
 	var req models.OrderBookRequest
 	if !dtovalidator.BindUriAndValidate(c, &req) {
 		return

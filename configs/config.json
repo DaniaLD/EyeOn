@@ -3,5 +3,8 @@
   "bitpin": {
     "apiKey": "o4vtnmIpFq6mMhU6p3JGotSq5KJKxyv4g7nEdx0eBKnMX4kvpzCh2XCjcKx47WHhYgkMDfgV2A3gOFRJ8rIOpj6ezBcaShnfxpUcsicceE4OW702yN4dZ7gmwh8LrfUn",
     "secretKey": "uCEkubDn44u3wDcDEF8ANgnzJjDvsDaql4KR7gI3JInSC4X7EVLY3zr25zsUF0nRFPuZEkfteNqkvULo4fSfzsFgBPnANz6jC2RoAeLrbAh0wovHWepoVfQI4l0RAch8"
+  },
+  "nobitex": {
+    "apiKey": "b0e2c5009e92f954ba5dc9a4b1f53c11dd69346d"
   }
 }

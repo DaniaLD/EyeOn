@@ -16,6 +16,7 @@ func main() {
 	cfgs := configs.GetConfigs()
 	bitpinApiKey := cfgs.BitPin.ApiKey
 	bitpinSecretKey := cfgs.BitPin.SecretKey
+	nobitexApiKey := cfgs.Nobitex.ApiKey
 
 	validator.New(validator.WithRequiredStructEnabled())
 
@@ -31,10 +32,17 @@ func main() {
 	bitpinSvc := service.NewBitpinExchangeService(bitpinClient)
 	bitpinHndlr := handler.NewBitpinHandler(bitpinSvc)
 
+	nobitexClient, err := exchanges.NewNobitexClient(nobitexApiKey)
+	if err != nil {
+		log.Fatalf("Unable to create bitpin client: %s", err.Error())
+	}
+	nobitexSvc := service.NewNobitexExchangeService(nobitexClient)
+	nobitexHndlr := handler.NewNobitexHandler(nobitexSvc)
+
 	engine := gin.Default()
 
 	// Setup router
-	r := api.NewRouter(engine, bitpinHndlr)
+	r := api.NewRouter(engine, bitpinHndlr, nobitexHndlr)
 	r.Init()
 
 	if err := engine.Run(":8080"); err != nil {
