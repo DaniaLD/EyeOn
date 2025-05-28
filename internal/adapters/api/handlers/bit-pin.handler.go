@@ -58,3 +58,19 @@ func (h *BitpinHandler) GetBalance(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, resp)
 }
+
+func (h *BitpinHandler) GetOrderBook(c *gin.Context) {
+	var req models.OrderBookRequest
+	if !dtovalidator.BindUriAndValidate(c, &req) {
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	resp, err := h.svc.GetOrderBook(ctx, req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, resp)
+}

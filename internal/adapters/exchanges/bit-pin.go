@@ -188,3 +188,45 @@ func (b *BitpinExchange) GetBalance(ctx context.Context) (*models.BalanceRespons
 
 	return &models.BalanceResponse{Assets: assets}, nil
 }
+
+func (b *BitpinExchange) GetOrderBook(ctx context.Context, req models.OrderBookRequest) (*models.OrderBookResponse, error) {
+	httpReq, err := http.NewRequestWithContext(ctx, "GET", fmt.Sprintf("%s/api/v1/mth/orderbook/%s/", b.baseURL, req.Symbol), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := b.client.Do(httpReq)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode >= 400 {
+		resBody, _ := ioutil.ReadAll(resp.Body)
+		return nil, fmt.Errorf("bitpin error: %s", resBody)
+	}
+
+	var result struct {
+		Asks [][]string `json:"asks"`
+		Bids [][]string `json:"bids"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, err
+	}
+
+	toEntries := func(raw [][]string) []models.OrderBookEntry {
+		var out []models.OrderBookEntry
+		for _, e := range raw {
+			out = append(out, models.OrderBookEntry{
+				Price:    e[0],
+				Quantity: e[1],
+			})
+		}
+		return out
+	}
+
+	return &models.OrderBookResponse{
+		Bids: toEntries(result.Bids),
+		Asks: toEntries(result.Asks),
+	}, nil
+}

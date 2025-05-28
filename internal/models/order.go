@@ -38,3 +38,17 @@ type CancelOrderResponse struct {
 type BalanceResponse struct {
 	Assets map[string]float64
 }
+
+type OrderBookRequest struct {
+	Symbol string `uri:"symbol" binding:"required"`
+}
+
+type OrderBookEntry struct {
+	Price    string
+	Quantity string
+}
+
+type OrderBookResponse struct {
+	Bids []OrderBookEntry
+	Asks []OrderBookEntry
+}
